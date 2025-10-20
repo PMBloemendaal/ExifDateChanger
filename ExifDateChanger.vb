@@ -9,7 +9,7 @@ Imports System.Windows.Forms
 
 Public Class ExifDateChanger
 
-    Private Sub KiesEnLaadJpgBestand()
+    Private Sub ChoosAndLoadJPG()
         ' We gebruiken de Using-statement om ervoor te zorgen dat de OpenFileDialog wordt vrijgegeven
         Using ofd As New OpenFileDialog()
 
@@ -42,7 +42,7 @@ Public Class ExifDateChanger
 
                 Try
                     ' Laad het bestand
-                    LaadAfbeeldingInPictureBox(selectedFilePath)
+                    LoadJPG(selectedFilePath)
 
                     ' **Sla het nieuwe, succesvol geladen pad op**
                     My.Settings.LastFilePath = selectedFilePath
@@ -56,7 +56,7 @@ Public Class ExifDateChanger
     End Sub
 
     ' Functie om de afbeelding daadwerkelijk te laden en weer te geven
-    Private Sub LaadAfbeeldingInPictureBox(ByVal filePath As String)
+    Private Sub LoadJPG(ByVal filePath As String)
         ' Eerst de oude afbeelding disposen om geheugen vrij te geven en het bestand te ontgrendelen
         If PictureBox1.Image IsNot Nothing Then
             PictureBox1.Image.Dispose()
@@ -74,4 +74,7 @@ Public Class ExifDateChanger
         Me.Text = $"Afbeelding geladen: {Path.GetFileName(filePath)}"
     End Sub
 
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+        ChoosAndLoadJPG()
+    End Sub
 End Class
