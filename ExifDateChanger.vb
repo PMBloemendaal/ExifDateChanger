@@ -4,8 +4,10 @@ Option Strict On
 Option Explicit On
 
 Imports System.Drawing
+Imports System.Drawing.Imaging
 Imports System.IO
 Imports System.Windows.Forms
+Imports System.Text
 
 Public Class ExifDateChanger
 
@@ -72,6 +74,9 @@ Public Class ExifDateChanger
         ' Pas PictureBox-eigenschappen aan
         PictureBox1.SizeMode = PictureBoxSizeMode.Zoom
         Me.Text = $"Afbeelding geladen: {Path.GetFileName(filePath)}"
+
+        TextBoxOutput.Text = OutputExifData(filePath)
+
     End Sub
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
