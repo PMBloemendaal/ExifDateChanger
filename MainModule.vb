@@ -1,5 +1,6 @@
 ﻿Imports System.Drawing
 Imports System.Drawing.Imaging
+Imports System.IO
 Imports System.Text
 
 Module Module1
@@ -57,6 +58,7 @@ Module Module1
             Case &H128 : Return "Resolution Unit (1 = None, 2 = inches, 3 = cm)"
             Case &H131 : Return "Software"
             Case &H132 : Return "Modifydate"
+            Case &H501B : Return "Thumbnaildata"
             Case &H9003 : Return "DateTimeOriginal"
             Case &H829A : Return "ExposureTime"
             Case &H829D : Return "FNumber"
@@ -112,4 +114,73 @@ Module Module1
             Return "Kon waarde niet lezen"
         End Try
     End Function
+
+    ' EXIF Tag ID voor DateTimeOriginal: 0x9003
+    Private Const TAG_DATE_TIME_ORIGINAL As Integer = &H9003
+
+    ' De vereiste datumformaat string in de EXIF-standaard: "YYYY:MM:DD HH:MM:SS"
+    Private Const EXIF_DATE_FORMAT As String = "yyyy:MM:dd HH:mm:ss"
+
+    ''' <summary>
+    ''' Wijzigt de EXIF DateTimeOriginal (CreationDate) tag in een JPG-bestand naar de huidige datum en tijd.
+    ''' </summary>
+    ''' <param name="filePath">Het volledige pad naar het JPG-bestand.</param>
+    ''' <returns>True als de bewerking succesvol was, anders False.</returns>
+    Public Function UpdateExifDate(ByVal filePath As String, Optional newDate As DateTime = Nothing) As Boolean
+        If IsNothing(newDate) Then
+            newDate = DateAndTime.Now.ToString(EXIF_DATE_FORMAT)
+        End If
+
+        If Not File.Exists(filePath) Then
+            Console.WriteLine("Fout: Bestand niet gevonden.")
+            Return False
+        End If
+
+        Try
+            ' 1. Bepaal de nieuwe datumwaarde (huidige datum en tijd)
+            Dim newDateTimeString As String = DateTime.Now.ToString(EXIF_DATE_FORMAT)
+
+            ' EXIF-waarden worden opgeslagen als een ASCII byte-array, afgesloten met een null-byte (0)
+            Dim newDateBytes As Byte() = Encoding.ASCII.GetBytes(newDateTimeString & Chr(0))
+
+            ' 2. Laad de afbeelding vanuit een stream om het bestand te deblokkeren
+            ' (Dit is cruciaal om het bestand te kunnen overschrijven)
+            Using fs As New FileStream(filePath, FileMode.Open, FileAccess.ReadWrite)
+                Using img As Image = Image.FromStream(fs)
+
+                    ' 3. Maak een nieuw PropertyItem aan voor de datum
+                    Dim pi As PropertyItem = img.PropertyItems(0) ' Gebruik een bestaand PropertyItem als template
+
+                    ' Vul het PropertyItem met de nieuwe waarden
+                    pi.Id = TAG_DATE_TIME_ORIGINAL
+                    pi.Type = 2 ' Type 2 = ASCII (String)
+                    pi.Len = newDateBytes.Length
+                    pi.Value = newDateBytes
+
+                    ' 4. Schrijf de nieuwe PropertyItem terug naar de afbeelding
+                    img.SetPropertyItem(pi)
+
+                    ' 5. De afbeelding opslaan
+                    ' Om de metadata echt te updaten, moeten we de afbeelding opslaan.
+                    ' We slaan deze tijdelijk op in een MemoryStream om de bewerking te voltooien
+                    ' en schrijven dan de volledige data terug naar het originele bestand.
+
+                    Using ms As New MemoryStream()
+                        img.Save(ms, ImageFormat.Jpeg)
+
+                        ' Schrijf de bijgewerkte afbeeldingsgegevens terug naar het originele bestand
+                        File.WriteAllBytes(filePath, ms.ToArray())
+                    End Using
+                End Using ' Sluit de Image
+            End Using ' Sluit de FileStream en maakt het bestand weer vrij
+
+            Console.WriteLine($"Succes: EXIF DateTimeOriginal is bijgewerkt naar {newDateTimeString} in {filePath}")
+            Return True
+
+        Catch ex As Exception
+            Console.WriteLine($"Fout bij het schrijven van EXIF-gegevens: {ex.Message}")
+            Return False
+        End Try
+    End Function
+
 End Module
