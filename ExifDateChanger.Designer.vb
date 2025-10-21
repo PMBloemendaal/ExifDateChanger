@@ -42,7 +42,7 @@ Partial Class ExifDateChanger
         ' 
         PictureBox1.Location = New Point(12, 41)
         PictureBox1.Name = "PictureBox1"
-        PictureBox1.Size = New Size(472, 472)
+        PictureBox1.Size = New Size(713, 472)
         PictureBox1.TabIndex = 1
         PictureBox1.TabStop = False
         ' 
@@ -53,14 +53,14 @@ Partial Class ExifDateChanger
         TextBoxOutput.Name = "TextBoxOutput"
         TextBoxOutput.ReadOnly = True
         TextBoxOutput.ScrollBars = ScrollBars.Vertical
-        TextBoxOutput.Size = New Size(472, 268)
+        TextBoxOutput.Size = New Size(713, 268)
         TextBoxOutput.TabIndex = 2
         ' 
         ' ExifDateChanger
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(496, 799)
+        ClientSize = New Size(737, 799)
         Controls.Add(TextBoxOutput)
         Controls.Add(PictureBox1)
         Controls.Add(Button1)
