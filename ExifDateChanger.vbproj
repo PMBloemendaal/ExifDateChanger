@@ -6,7 +6,13 @@
     <StartupObject>Sub Main</StartupObject>
     <UseWindowsForms>true</UseWindowsForms>
     <MyType>WindowsForms</MyType>
+    <ApplicationIcon>ExifDateChanger.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="ExifDateChanger.ico" />
+    <Content Include="myIcon.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <Import Include="System.Data" />

@@ -87,9 +87,11 @@ Partial Class ExifDateChanger
         Controls.Add(TextBoxOutput)
         Controls.Add(PictureBox1)
         Controls.Add(butLoadPicture)
+        FormBorderStyle = FormBorderStyle.FixedToolWindow
         Icon = CType(resources.GetObject("$this.Icon"), Icon)
         MaximizeBox = False
         Name = "ExifDateChanger"
+        SizeGripStyle = SizeGripStyle.Hide
         Text = "Exif Date Changer"
         CType(PictureBox1, ComponentModel.ISupportInitialize).EndInit()
         ResumeLayout(False)
