@@ -1,9 +1,14 @@
 ﻿Imports System.Drawing
 Imports System.Drawing.Imaging
 Imports System.IO
+Imports System.Security.Cryptography
 Imports System.Text
+Imports System.Text.RegularExpressions
+Imports ExifLibrary 'Install-Package ExifLibrary (Package Manager Console)
 
 Module Module1
+
+
     Public Function OutputExifData(imagePath As String) As String
 
         Dim ret As String = ""
@@ -132,7 +137,6 @@ Module Module1
         End If
 
         If Not File.Exists(filePath) Then
-            Console.WriteLine("Fout: Bestand niet gevonden.")
             Return False
         End If
 
@@ -174,13 +178,99 @@ Module Module1
                 End Using ' Sluit de Image
             End Using ' Sluit de FileStream en maakt het bestand weer vrij
 
-            Console.WriteLine($"Succes: EXIF DateTimeOriginal is bijgewerkt naar {newDateTimeString} in {filePath}")
             Return True
 
         Catch ex As Exception
-            Console.WriteLine($"Fout bij het schrijven van EXIF-gegevens: {ex.Message}")
             Return False
         End Try
     End Function
 
+    Function UpdateExifDates(fileName As String) As String
+        ' Pad naar het JPG-bestand
+
+        ' Controleer of bestand bestaat
+        If Not File.Exists(fileName) Then
+            Return ("File not found:" & fileName)
+        End If
+
+        Try
+            ' Probeer het JPG-bestand te laden (met of zonder bestaande EXIF)
+            Dim afbeelding As ImageFile = Nothing
+            afbeelding = ImageFile.FromFile(fileName)
+
+            ' Huidige datum/tijd (nu)
+            Dim nu As DateTime = ExtractDateTimeFromFilename(fileName)
+            If fileName IsNot Nothing Then
+                Dim blnDateTimeChanged As Boolean
+
+                ' EXIF datums instellen of bijwerken
+                If AddOrUpdateExifDate(afbeelding, ExifTag.DateTimeOriginal, nu) Then blnDateTimeChanged = True
+                If AddOrUpdateExifDate(afbeelding, ExifTag.DateTimeDigitized, nu) Then blnDateTimeChanged = True
+                If AddOrUpdateExifDate(afbeelding, ExifTag.DateTime, nu) Then blnDateTimeChanged = True
+
+
+                ' Bestand opslaan (overschrijft het origineel, alleen als er wat veranderd is.)
+                If blnDateTimeChanged Then
+                    afbeelding.Save(fileName)
+                    Return "EXIF-date of file: '" & fileName & "' updated to " & nu.ToString("yyyy:MM:dd HH:mm:ss")
+                Else
+                    Return "EXIF-date of file: '" & fileName & "' already updated."
+                End If
+
+
+            Else
+                Return "No date/time found in filename: " & fileName
+            End If
+        Catch ex As Exception
+            Return "Error: " & ex.Message
+        End Try
+    End Function
+    Private Function ContainsTag(imgProperties As ExifPropertyCollection, myTag As ExifTag) As Boolean
+        For Each tag In imgProperties
+            If tag.Name = myTag.ToString Then
+                Return True
+            End If
+        Next
+        Return False
+    End Function
+
+    Private Function AddOrUpdateExifDate(img As ImageFile, tag As ExifTag, waarde As DateTime) As Boolean
+        If ContainsTag(img.Properties, tag) Then
+            Return False
+        Else
+            img.Properties.Add(New ExifDateTime(tag, waarde))
+            Return True
+        End If
+
+    End Function
+    Function ExtractDateTimeFromFilename(pad As String) As DateTime
+        Dim bestandsnaam As String = Path.GetFileNameWithoutExtension(pad)
+
+        ' Lijst met regex-patronen
+        Dim patronen As String() = {
+            "(?<jaar>\d{4})(?<maand>\d{2})(?<dag>\d{2})[_-](?<uur>\d{2})(?<min>\d{2})(?<sec>\d{2})",             ' 20251022_100054 of SV_20250704_103014
+            "(?<jaar>\d{4})[-_](?<maand>\d{2})[-_](?<dag>\d{2})[ T]?(?<uur>\d{2})[.:](?<min>\d{2})[.:](?<sec>\d{2})", ' 2025-01-05 09.04.19
+            "(?<jaar>\d{4})[-_](?<maand>\d{2})[-_](?<dag>\d{2}).*?at[ _]?(?<uur>\d{2})[.:](?<min>\d{2})[.:](?<sec>\d{2})" ' WhatsApp Image ...
+        }
+
+        For Each patroon In patronen
+            Dim m As Match = Regex.Match(bestandsnaam, patroon, RegexOptions.IgnoreCase)
+            If m.Success Then
+                Try
+                    Dim jaar = Integer.Parse(m.Groups("jaar").Value)
+                    Dim maand = Integer.Parse(m.Groups("maand").Value)
+                    Dim dag = Integer.Parse(m.Groups("dag").Value)
+                    Dim uur = Integer.Parse(m.Groups("uur").Value)
+                    Dim min = Integer.Parse(m.Groups("min").Value)
+                    Dim sec = Integer.Parse(m.Groups("sec").Value)
+                    Return New DateTime(jaar, maand, dag, uur, min, sec)
+                Catch
+                    ' Ga door naar volgende patroon
+                End Try
+            End If
+        Next
+
+        ' Geen match gevonden
+        Return Nothing
+    End Function
 End Module
