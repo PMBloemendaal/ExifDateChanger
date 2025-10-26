@@ -253,6 +253,10 @@ Module Module1
             "(?<jaar>\d{4})[-_](?<maand>\d{2})[-_](?<dag>\d{2}).*?at[ _]?(?<uur>\d{2})[.:](?<min>\d{2})[.:](?<sec>\d{2})" ' WhatsApp Image ...
         }
 
+        'Alternatief van Andries
+        'Dim patroon As String = "(^|\D)(?<jaar>[12]\d{3})[\/-]?(?<maand>[01]\d)[\/-]?(?<dag>[0-3]\d)\D*(?<uur>[0-2]\d)[:\.]?(?<min>[0-5]\d)[:\.]?(?<sec>[0-5]\d)(\D|$)"
+        'TODO implement als 1 patroon
+
         For Each patroon In patronen
             Dim m As Match = Regex.Match(bestandsnaam, patroon, RegexOptions.IgnoreCase)
             If m.Success Then
