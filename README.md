@@ -118,33 +118,7 @@ Dit commando biedt de functionaliteit voor **geautomatiseerde mapverwerking**. D
 ***
 
 ## Technische Specificatie
-### Ondersteunde Metadata Tags
-De applicatie is in staat om de volgende EXIF-metadata tags te **parseren** en aan de gebruiker te **visualiseren**:# ExifDateChanger
 
-## Doel van ExifDateChanger
-Voor het maken van stereofoto's gebruik ik sinds deze camera:
-![XReal Beam PRO](https://eu.shop.xreal.com/cdn/shop/files/1.png?v=1718638918 "XReal Beam PRO")
-De standaard camera software van de XReal Beam PRO schrijft in de EXIF metadata vrijwel geen informatie. Een van de metadata tags die ik mis, is het tijdstip waarop de foto gemaakt is. Dit tijdstip staat wel in de naam van de afbeeldingen, maar dus niet in de EXIF data. Dit programma is gemaakt om de bestandsnaam van de afbeeldingen te gebruiken en aan de metadata van de afbeeldingen toe te voegen.
-
-## Functionele specificatie
-ExifDateChanger is een simpel programma gebaseerd op Windows om EXIF meta data van afbeeldingen in te lezen. De meeste EXIF metadata wordt gelezen en getoond na het laden van het programma.
-Daarnaast bied dit programma de mogelijkheid om als de datum waarop een afbeelding gemaakt is niet aanwezig is in de EXIF metadata deze toe te voegen.
-Ook heeft deze applicatie de mogelijkheid om dit proces binnen de afbeeldingen van 1 folder te automatiseren. Hierbij worden alle afbeeldingen gescand en alleen afbeeldingen waar bij creatie datum binnen de EXIF metadata ontbreekt toegevoegd. De originele afbeeldingen worden hierbij overschreven. 
-Als de datum wel aanwezig is, wordt het bestand van de afbeelding ongewijzigd gelaten.
-
-## Gebruiks interface
-Het gebruik en werking is eenvoudig. Er zijn 3 knoppen aanwezig.
-
-### Load Picture
-Hier kan de gebruiker een afbeelding via een dialoogbox selecteren en laden. De afbeelding wordt getoond in het plaatjesveld. Daaron wordt in tekst alle EXIF metadata getoond die de afbeelding bevat, waarbij de meeste tagnames voor de gebruiker wordt vertaald.
-
-### Save Date
-Als een afbeelding via <Load Picture> ingeladen is en de EXIF metadata getoond wordt, kan * * alleen als de datum waarop de afbeelding gemaakt is ontbreekt* * , de datum uit de bestandsnaam worden gehaald en in de EXIF metadata worden geschreven.
-
-### Save Date Folder
-De gebruiker krijgt de mogelijkheid een folder te selecteren waarin afbeeldingen zijn opgenomen. Het programma zal hierna alle afbeeldingen scannen en de EXIF metadata extraheren. Indien de datum waarop een afbeelding is gemaakt ontbreekt, voegt het programma deze aan de EXIF metadata toe. Als de datum waarop de afbeelding is gemaakt al aanwezig is, wordt het bestand ongewijzigd gelaten.
-
-## Technische specificatie
 ### Ondersteunde metadata tages
 De volgende metadata tags worden herkend en getoond aan de gebruiker
 
