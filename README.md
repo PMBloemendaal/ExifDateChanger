@@ -148,7 +148,7 @@ De gebruiker krijgt de mogelijkheid een folder te selecteren waarin afbeeldingen
 ### Ondersteunde metadata tages
 De volgende metadata tags worden herkend en getoond aan de gebruiker
 
-* ImageDescription
+* ImageDescription 
 * Make
 * Model
 * Orientation (1 = Horizontal (normal), 2 = Mirror horizontal, 3 = Rotate 180, 4 = Mirror vertical, 5 = Mirror horizontal and rotate 270 CW, 6 = Rotate 90 CW, 7 = Mirror horizontal and rotate 90 CW, 8 = Rotate 270 CW)
